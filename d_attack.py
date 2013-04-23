@@ -6,22 +6,21 @@ if len(sys.argv) != 3:
 	print "Usage: %s <file of hashes> <word list>" % sys.argv[0]
 	quit()
 
-	
-def bruteforce(hashes, word, hash)
-	hashes = [line.strip() for line in open(sys.argv[1], 'r')]
-	print "Imported %d hashes" % len(hashes)
+def bruteforce(hash_list, word_list):
+	cracked_hashes = {}
+	hashes = [line.strip() for line in open(hash_list, 'r')]
 
-	for word in open(sys.argv[2], 'r'):
+	for word in open(word_list, 'r'):
 		word = word.rstrip()
 		hash = md5(word).hexdigest()
 		
 		if hash in hashes:
-			print "%s | %s" % (hash, word)
+			cracked_hashes[hash] = word
 			hashes.remove(hash)
 			if hashes == []:
 				break
-
-	print "%d hashes not cracked" % len(hashes)
+				
+	return cracked_hashes			
 	
-	
-bruteforce(sys.argv[1], sys.argv[2])
+cracked_hashes = bruteforce(sys.argv[1], sys.argv[2])
+print cracked_hashes
