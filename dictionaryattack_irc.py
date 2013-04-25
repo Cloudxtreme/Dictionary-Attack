@@ -32,20 +32,21 @@ class dictionaryattack:
         sock.msg(buffer.to, " * dictionaryattack.crack <hash list url> <word list url>")
 
     def crack(self, bot, sock, buffer):
-        arguments = buffer.msg.split()
         cracked_hashes = {}
-        hashes = [line.strip() for line in urlopen(arguments[1])]
-		
+        arguments = buffer.msg.split()
+        for line in urlopen(arguments[1]):
+            cracked_hashes[line.rstrip()] = None
+            num_uncracked = len(cracked_hashes)
+
         for word in urlopen(arguments[2]):
             word = word.rstrip()
             hash = md5(word).hexdigest()
 
-            if hash in hashes:
-                cracked_hashes[hash] = word
-                hashes.remove(hash)
+            if hash not in cracked_hashes: continue
 
-            if hashes == []:
-                break
+            cracked_hashes[hash] = word
+            num_uncracked -= 1
+            if not num_uncracked: break
 
         for hash in cracked_hashes:
             if hash: sock.msg(buffer.to, "Found %s as %s" % (hash, cracked_hashes[hash]))
